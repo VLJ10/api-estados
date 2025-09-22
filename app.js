@@ -40,7 +40,7 @@ app.use((request, response, next) => {
 
 //EndPoints
 
-
+// Retorna todos os estados
 app.get('/v1/estados', function(request, response){
 
     let estados = dados.getAllEstados()
@@ -49,6 +49,7 @@ app.get('/v1/estados', function(request, response){
     response.json(estados)
 })
 
+// Retorna um estado em especifico
 app.get('/v1/estado/:uf', (request, response) => {
 
     let sigla = request.params.uf
@@ -61,17 +62,45 @@ app.get('/v1/estado/:uf', (request, response) => {
 
    
 })
-
-app.get('/v1/regiao/estado/:id', (request, response) => {
-    let regiaoEstados = request.query.regiao
-    let sigla         = request.query.uf
-    let id            = request.params.id
-
-    console.log(regiaoEstados)
-    console.log(sigla)
-    console.log(id)
+// retorna uma capital pela sigla do estado
+app.get('/v1/capital/estado/:uf', (request, response) => {
+    
+    let sigla = request.params.uf
+    let capital = dados.getCapitalbySigla(sigla)
+ 
+    response.status(capital.statuscode)
+    response.json(capital)
 
 })
+//retorna os estados pela região
+app.get('/v1/regiao/estado', (request, response) => {
+    
+    let regiao = request.query.regiao
+    let regiaoEstados = dados.getEstadosByRegiao(regiao)
+
+    response.status(regiaoEstados.statuscode)
+    response.json(regiaoEstados)
+    
+})
+
+app.get('/v1/pais/capital/:pais',  (request, response) => {
+
+    let paisCapital = request.params.pais
+    let capital = dados.getEstadoCapitalByPais(paisCapital)
+
+    response.status(capital.statuscode)
+    response.json(capital)
+})
+
+app.get('/v1/cidade/estado/:uf',  (request, response) => {
+
+    let cidadeEstado = request.params.uf
+    let cidade = dados.getCidadesByEstados(cidadeEstado)
+
+    response.status(cidade.statuscode)
+    response.json(cidade)
+})
+
 
 //Start da API
 app.listen(PORT, () => {
